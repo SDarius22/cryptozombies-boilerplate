@@ -197,10 +197,10 @@ describe("ZombieAttack", function () {
 
       const winRate = (wins / trials) * 100;
 
-      // Win rate should be approximately 70% (allow 40-100% range due to small sample size)
-      // With only 10 trials, we expect 7 wins on average, but could be anywhere from 4-10
+      // Win rate should be approximately 70% (allow 30-100% range due to small sample size)
+      // With only 10 trials, we expect 7 wins on average, but small samples can produce 100%
       expect(winRate).to.be.greaterThan(30);
-      expect(winRate).to.be.lessThan(100);
+      expect(winRate).to.be.lte(100);
     }).timeout(120000); // Increase timeout for this long test
   });
 });

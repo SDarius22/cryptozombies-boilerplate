@@ -18,6 +18,8 @@
     "interact:get": "hardhat run scripts/interactions/getZombies.ts --network localhost",
     "interact:levelup": "hardhat run scripts/interactions/levelUp.ts --network localhost",
     "interact:changename": "hardhat run scripts/interactions/changeName.ts --network localhost",
+    "interact:feedrare": "hardhat run scripts/interactions/feedOnRare.ts --network localhost",
+    "interact:buyskill": "hardhat run scripts/interactions/buySpecialSkill.ts --network localhost",
     "clean": "hardhat clean",
     "typecheck": "tsc --noEmit"
   },

@@ -22,6 +22,8 @@ contract ZombieFeeding is ZombieFactory {
 
   KittyInterface kittyContract;
 
+  event RareFeedBonus(uint256 indexed zombieId, uint256 newLevel);
+
   modifier onlyOwnerOf(uint256 _zombieId) {
     require(msg.sender == zombieToOwner[_zombieId]);
     _;
@@ -46,6 +48,11 @@ contract ZombieFeeding is ZombieFactory {
     uint256 newDna = (myZombie.dna + _targetDna) / 2;
     if (keccak256(abi.encodePacked(_species)) == keccak256(abi.encodePacked("kitty"))) {
       newDna = newDna - newDna % 100 + 99;
+    } else if (keccak256(abi.encodePacked(_species)) == keccak256(abi.encodePacked("rare"))) {
+      // Rare species: zombie levels up 2 extra levels!
+      myZombie.level += 2;
+      newDna = newDna - newDna % 100 + 77; // Rare DNA signature
+      emit RareFeedBonus(_zombieId, myZombie.level);
     }
     _createZombie("NoName", newDna);
     _triggerCooldown(myZombie);
@@ -55,5 +62,12 @@ contract ZombieFeeding is ZombieFactory {
     uint256 kittyDna;
     (,,,,,,,,,kittyDna) = kittyContract.getKitty(_kittyId);
     feedAndMultiply(_zombieId, kittyDna, "kitty");
+  }
+
+  /// @notice Feed your zombie on a rare creature to gain 2 extra levels.
+  /// @param _zombieId The ID of your zombie.
+  /// @param _rareDna  The DNA of the rare creature to feed on.
+  function feedOnRare(uint256 _zombieId, uint256 _rareDna) public {
+    feedAndMultiply(_zombieId, _rareDna, "rare");
   }
 }
