@@ -6,10 +6,12 @@ import "./ZombieFeeding.sol";
 contract ZombieHelper is ZombieFeeding {
 
   uint256 levelUpFee = 0.001 ether;
-  uint256 specialSkillFee = 0.01 ether;
+  uint256 fireballFee   = 0.01 ether;
+  uint256 iceShieldFee  = 1 ether;
+  uint256 poisonClawFee = 0.05 ether;
 
-  // Special skills: 1=Fireball (+10% attack), 2=IceShield (-10% enemy attack), 3=PoisonClaw (enemy loses level on defeat)
   event SpecialSkillBought(uint256 indexed zombieId, uint8 skillId);
+  event SkillFeeChanged(uint8 indexed skillId, uint256 newFee);
 
   modifier aboveLevel(uint256 _level, uint256 _zombieId) {
     require(zombies[_zombieId].level >= _level);
@@ -26,8 +28,19 @@ contract ZombieHelper is ZombieFeeding {
     levelUpFee = _fee;
   }
 
-  function setSpecialSkillFee(uint256 _fee) external onlyOwner {
-    specialSkillFee = _fee;
+  function getSkillFee(uint8 _skillId) public view returns (uint256) {
+    if (_skillId == 1) return fireballFee;
+    if (_skillId == 2) return iceShieldFee;
+    if (_skillId == 3) return poisonClawFee;
+    revert("Invalid skill ID (1-3)");
+  }
+
+  function setSkillFee(uint8 _skillId, uint256 _fee) external onlyOwner {
+    if (_skillId == 1) fireballFee = _fee;
+    else if (_skillId == 2) iceShieldFee = _fee;
+    else if (_skillId == 3) poisonClawFee = _fee;
+    else revert("Invalid skill ID (1-3)");
+    emit SkillFeeChanged(_skillId, _fee);
   }
 
   function levelUp(uint256 _zombieId) external payable {
@@ -35,18 +48,13 @@ contract ZombieHelper is ZombieFeeding {
     zombies[_zombieId].level++;
   }
 
-  /// @notice Buy a special skill for your zombie.
-  /// Skill 1 = Fireball: +10% attack victory probability.
-  /// Skill 2 = IceShield: reduces enemy attack probability by 10%.
-  /// Skill 3 = PoisonClaw: on victory the enemy zombie loses a level.
   function buySpecialSkill(uint256 _zombieId, uint8 _skillId) external payable onlyOwnerOf(_zombieId) {
     require(_skillId >= 1 && _skillId <= 3, "Invalid skill ID (1-3)");
-    require(msg.value == specialSkillFee, "Incorrect ETH amount");
+    require(msg.value == getSkillFee(_skillId), "Incorrect ETH amount");
     zombies[_zombieId].specialSkill = _skillId;
     emit SpecialSkillBought(_zombieId, _skillId);
   }
 
-  /// @notice Returns the name of a special skill by ID.
   function getSpecialSkillName(uint8 _skillId) public pure returns (string memory) {
     if (_skillId == 1) return "Fireball";
     if (_skillId == 2) return "IceShield";
