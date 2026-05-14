@@ -4,19 +4,13 @@ import { ZombieOwnership } from "../../typechain-types";
 /**
  * Feature 2: Buy a special skill for your zombie.
  *
- * Skill IDs (each skill has its own fee, configurable by the contract owner):
+ * Skill:
  *   1 = Fireball   (+10% attack victory probability)            — 0.01 ETH
- *   2 = IceShield  (-10% enemy attack probability when defending) — 1   ETH  ← expensive!
+ *   2 = IceShield  (-10% enemy attack probability when defending) — 1  ETH
  *   3 = PoisonClaw (enemy loses a level on defeat)              — 0.05 ETH
- *
- * The actual fee is always read from the contract via getSkillFee(skillId).
  *
  * Usage:
  *   ZOMBIE_ID=0 SKILL_ID=1 npm run interact:buyskill
- *
- * Demo the "insufficient payment" revert (Contract-level):
- *   ZOMBIE_ID=0 SKILL_ID=2 PAY_OVERRIDE=0.01 npm run interact:buyskill
- *   (pays 0.01 ETH for IceShield which costs 1 ETH → "Incorrect ETH amount")
  */
 
 const SKILL_DESCRIPTIONS: Record<number, string> = {
