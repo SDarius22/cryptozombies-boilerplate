@@ -50,21 +50,32 @@ async function main() {
   console.log("  Level:", zombieBefore.level.toString());
   console.log("  DNA:", zombieBefore.dna.toString());
 
-  console.log("\n⏳ Feeding on rare creature...");
+  console.log("\nFeeding on rare creature...");
   const tx = await contract.feedOnRare(zombieId, rareDna);
   console.log("Transaction hash:", tx.hash);
   await tx.wait();
-  console.log("✅ Transaction confirmed!");
+  console.log("Transaction confirmed!");
 
   const zombieAfter = await contract.zombies(zombieId);
-  console.log("\n🎉 Rare feeding successful!");
-  console.log("Zombie after feeding:");
+  console.log("\n Rare feeding successful!");
+  console.log("Zombie after feeding (parent):");
   console.log("  Name:", zombieAfter.name);
   console.log("  Level:", zombieAfter.level.toString(), "(gained", (Number(zombieAfter.level) - Number(zombieBefore.level)).toString(), "levels!)");
-  console.log("  DNA:", zombieAfter.dna.toString());
+  console.log("  DNA:", zombieAfter.dna.toString(), "(unchanged — only the level gains the rare bonus)");
 
   const ownerZombies = await contract.getZombiesByOwner(signer.address);
-  console.log("\n🧟 You now own", ownerZombies.length, "zombie(s).");
+  const newZombieId = ownerZombies[ownerZombies.length - 1];
+  const newZombie = await contract.zombies(newZombieId);
+  const dnaStr = newZombie.dna.toString();
+  const dnaSuffix = dnaStr.slice(-2).padStart(2, "0");
+  console.log("\n New zombie spawned by the rare feed:");
+  console.log("  ID:", newZombieId.toString());
+  console.log("  Name:", newZombie.name);
+  console.log("  Level:", newZombie.level.toString());
+  console.log("  DNA:", dnaStr);
+  console.log("  Rare DNA signature (last 2 digits):", dnaSuffix, dnaSuffix === "77" ? " (Okay)" : "(Not okay - expected 77)");
+
+  console.log("\nYou now own", ownerZombies.length, "zombie(s).");
 }
 
 main()

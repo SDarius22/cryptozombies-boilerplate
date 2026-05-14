@@ -51,7 +51,7 @@ async function main() {
 
   const skillFee = ethers.parseEther("0.01");
 
-  console.log("\u2694\ufe0f  Buy Special Skill (Feature 2)\n");
+  console.log("\u2694Buy Special Skill (Feature 2)\n");
   console.log("Contract address:", contractAddress);
   console.log("Zombie ID:", zombieId);
   console.log("Skill:", skillId, "-", SKILL_DESCRIPTIONS[skillId]);
@@ -71,7 +71,7 @@ async function main() {
   );
   console.log("\nZombie current skill:", currentSkillName);
 
-  console.log("\n\u23f3 Buying special skill...");
+  console.log("\nBuying special skill...");
   const tx = await contract.buySpecialSkill(zombieId, skillId, {
     value: skillFee,
   });
@@ -83,7 +83,7 @@ async function main() {
   const newSkillName = await contract.getSpecialSkillName(
     zombieAfter.specialSkill
   );
-  console.log("\n\ud83c\udf89 Skill purchased successfully!");
+  console.log("\nSkill purchased successfully!");
   console.log("Zombie Details:");
   console.log("  Name:", zombieAfter.name);
   console.log("  Level:", zombieAfter.level.toString());
